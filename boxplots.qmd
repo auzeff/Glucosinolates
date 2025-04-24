@@ -1,0 +1,184 @@
+---
+title: "Glucosinolates boxplots"
+format: html
+editor: visual
+---
+
+## Importing data
+
+```{r}
+library(googlesheets4)
+
+# OSU batch 1
+osu1_url <- "https://docs.google.com/spreadsheets/d/118i9ABrOEEZh9DKQfqblH9OoGBGFx7Ag0Om7qqwCFdU/edit?gid=29551570#gid=29551570"
+osu1 <- read_sheet(osu1_url)
+
+# Rescue batch 1
+rescue_url <- "https://docs.google.com/spreadsheets/d/1li20fbRxX5h_LOwlBBOShKI8qtU7lE5x2h9sRhBROY8/edit?gid=0#gid=0"
+rescue <- read_sheet(rescue_url)
+
+# OSU batch 2
+osu2_url <- "https://docs.google.com/spreadsheets/d/1ZoAR4zQvLvISfKTPKwIKd2HjcbdojCBwGO8ScfK5BDY/edit?gid=0#gid=0"
+osu2 <- read_sheet(osu2_url)
+
+# Col-0
+col0_url <- "https://docs.google.com/spreadsheets/d/1iuXe9JHEs8dgZdHgXvjMDzDs_dkk9j0DJzfdM8gVpz4/edit?gid=0#gid=0"
+col0 <- read_sheet(col0_url)
+
+# Making sure correct columns are factors
+osu1$Temp <- as.factor(osu1$Temp)
+rescue$Temp <- as.factor(rescue$Temp)
+osu2$Temp <- as.factor(osu2$Temp)
+col0$Temp <- as.factor(col0$Temp)
+rescue$Growth_time_days <- as.factor(rescue$Growth_time_days)
+osu2$Days_in_fridge <- as.factor(osu2$Days_in_fridge)
+col0$Num_plants <- as.factor(col0$Num_plants)
+```
+
+------------------------------------------------------------------------
+
+## Boxplots
+
+Making a function for more efficient repetition:
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# This function assumes that x is "Temp" and is already a factor
+ez_bp <- function(data, y, ig, log = FALSE) {
+  
+  data_name <- deparse(substitute(data)) # this needs to be defined before we transform the data
+  
+  # Log-transforming if needed and adjusting label accordingly
+  if (log) {
+    data[[y]] <- log(data[[y]])
+    label <- paste(ig, "(log nmol/mg fresh mass)")
+  } else {
+    label <- paste(ig, "(nmol/mg fresh mass)")
+  }
+
+  # Building the plot
+  bp <- ggplot(data, aes(x = Temp, y = .data[[y]], fill = Temp))
+  bp <- bp + geom_boxplot()
+  bp <- bp + scale_fill_manual(values = c("16" = "steelblue1", "21" = "slateblue1", "29" = "tomato")) 
+  bp <- bp + ylab(label)
+  bp <- bp + xlab("Temperature (°C)")
+  bp <- bp + theme(legend.position = "none") # no legend
+
+  # Naming the output
+  y_short <- sub("_eq$", "", y)
+  name <- paste0("bp_", data_name, "_", y_short)
+
+  # Assigning to global environment
+  assign(name, bp, envir = .GlobalEnv)
+  
+  bp # returning the boxplot
+}
+```
+
+------------------------------------------------------------------------
+
+### OSU batch 1
+
+#### 6.5
+
+```{r}
+ez_bp(osu1, y = "6.5_eq", ig = "Sinigrin", log = TRUE)
+```
+
+#### 17.3
+
+```{r}
+ez_bp(osu1, y = "17.3_eq", ig = "I3M", log = TRUE)
+```
+
+#### 19
+
+```{r}
+ez_bp(osu1, y = "19_eq", ig = "4MO13M")
+```
+
+#### 22.2
+
+```{r}
+ez_bp(osu1, y = "22.2_eq", ig = "1M")
+```
+
+------------------------------------------------------------------------
+
+### Rescue batch 1
+
+#### 6.5
+
+```{r}
+ez_bp(rescue, y = "6.5_eq", ig = "Sinigrin")
+```
+
+#### 17.3
+
+```{r}
+ez_bp(rescue, y = "17.3_eq", ig = "I3M")
+```
+
+#### 19
+
+```{r}
+ez_bp(rescue, y = "19_eq", ig = "4MO13M")
+```
+
+#### 22.2
+
+```{r}
+ez_bp(rescue, y = "22.2_eq", ig = "1M")
+```
+
+------------------------------------------------------------------------
+
+### OSU batch 2
+
+#### 6.5
+
+```{r}
+ez_bp(osu2, y = "6.5_eq", ig = "Sinigrin")
+```
+
+#### 17.3
+
+```{r}
+ez_bp(osu2, y = "17.3_eq", ig = "I3M")
+```
+
+#### 19
+
+```{r}
+ez_bp(osu2, y = "19_eq", ig = "4MO13M")
+```
+
+#### 22.2
+
+```{r}
+ez_bp(osu2, y = "22.2_eq", ig = "1M")
+```
+
+------------------------------------------------------------------------
+
+### Col-0
+
+#### 17.3
+
+```{r}
+ez_bp(col0, y = "17.3_eq", ig = "I3M")
+```
+
+#### 19
+
+```{r}
+ez_bp(col0, y = "19_eq", ig = "4MO13M")
+```
+
+#### 22.2
+
+```{r}
+ez_bp(col0, y = "22.2_eq", ig = "1M")
+```

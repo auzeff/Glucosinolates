@@ -1,0 +1,173 @@
+---
+title: "Glucosinolates ANOVA analysis"
+format: html
+editor: visual
+---
+
+## Importing data
+
+```{r}
+library(googlesheets4)
+
+# OSU batch 1
+osu1_url <- "https://docs.google.com/spreadsheets/d/118i9ABrOEEZh9DKQfqblH9OoGBGFx7Ag0Om7qqwCFdU/edit?gid=29551570#gid=29551570"
+osu1 <- read_sheet(osu1_url)
+
+# Rescue batch 1
+rescue_url <- "https://docs.google.com/spreadsheets/d/1li20fbRxX5h_LOwlBBOShKI8qtU7lE5x2h9sRhBROY8/edit?gid=0#gid=0"
+rescue <- read_sheet(rescue_url)
+
+# OSU batch 2
+osu2_url <- "https://docs.google.com/spreadsheets/d/1ZoAR4zQvLvISfKTPKwIKd2HjcbdojCBwGO8ScfK5BDY/edit?gid=0#gid=0"
+osu2 <- read_sheet(osu2_url)
+
+# Col-0
+col0_url <- "https://docs.google.com/spreadsheets/d/1iuXe9JHEs8dgZdHgXvjMDzDs_dkk9j0DJzfdM8gVpz4/edit?gid=0#gid=0"
+col0 <- read_sheet(col0_url)
+
+# Making sure correct columns are factors
+osu1$Temp <- as.factor(osu1$Temp)
+rescue$Temp <- as.factor(rescue$Temp)
+osu2$Temp <- as.factor(osu2$Temp)
+col0$Temp <- as.factor(col0$Temp)
+rescue$Growth_time_days <- as.factor(rescue$Growth_time_days)
+osu2$Days_in_fridge <- as.factor(osu2$Days_in_fridge)
+col0$Num_plants <- as.factor(col0$Num_plants)
+```
+
+------------------------------------------------------------------------
+
+## ANOVA tests
+
+Making a function for more efficient repetition:
+
+```{r}
+ez_aov <- function(data, x, y) {
+  
+  #Formula setup
+  x <- as.character(x) # x and y should be strings
+  y <- as.character(y)
+  formula <- as.formula(paste0("`", y, "` ~ `", x, "`")) # converting x and y inputs into formula (includes backticks for decimals)
+  
+  # Running ANOVA
+  result <- aov(formula, data = data)
+  
+  # Naming the output
+  data_name <- deparse(substitute(data)) # converting dataset input into string for output name
+  x <- sub("_eq$", "", x) # removing "_eq" from end of input name (if there) for use in output name
+  y <- sub("_eq$", "", y)
+  name <- paste0(data_name, "_", y, "_", x, ".aov") # putting together the name
+  
+  # Assigning the result into the global environment
+  assign(name, result, envir = .GlobalEnv)
+  
+  # Returning a summary
+  summary(result)
+}
+```
+
+------------------------------------------------------------------------
+
+### OSU batch 1
+
+#### 6.5
+
+```{r}
+ez_aov(osu1, "Temp", "6.5_eq")
+```
+
+#### 17.3
+
+```{r}
+ez_aov(osu1, "Temp", "17.3_eq")
+```
+
+#### 19
+
+```{r}
+ez_aov(osu1, "Temp", "19_eq")
+```
+
+#### 22.2
+
+```{r}
+ez_aov(osu1, "Temp", "22.2_eq")
+```
+
+------------------------------------------------------------------------
+
+### Rescue batch 1
+
+#### 6.5
+
+```{r}
+ez_aov(rescue, "Temp", "6.5_eq")
+```
+
+#### 17.3
+
+```{r}
+ez_aov(rescue, "Temp", "17.3_eq")
+```
+
+#### 19
+
+```{r}
+ez_aov(rescue, "Temp", "19_eq")
+```
+
+#### 22.2
+
+```{r}
+ez_aov(rescue, "Temp", "22.2_eq")
+```
+
+------------------------------------------------------------------------
+
+### OSU batch 2
+
+#### 6.5
+
+```{r}
+ez_aov(osu2, "Temp", "6.5_eq")
+```
+
+#### 17.3
+
+```{r}
+ez_aov(osu2, "Temp", "17.3_eq")
+```
+
+#### 19
+
+```{r}
+ez_aov(osu2, "Temp", "19_eq")
+```
+
+#### 22.2
+
+```{r}
+ez_aov(osu2, "Temp", "22.2_eq")
+```
+
+------------------------------------------------------------------------
+
+### Col-0
+
+#### 17.3
+
+```{r}
+ez_aov(col0, "Temp", "17.3_eq")
+```
+
+#### 19
+
+```{r}
+ez_aov(col0, "Temp", "19_eq")
+```
+
+#### 22.2
+
+```{r}
+ez_aov(col0, "Temp", "22.2_eq")
+```

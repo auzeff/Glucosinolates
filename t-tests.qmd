@@ -1,0 +1,198 @@
+---
+title: "Glucosinolates t-tests"
+format: html
+editor: visual
+---
+
+## Importing data
+
+```{r}
+library(googlesheets4)
+
+# OSU batch 1
+osu1_url <- "https://docs.google.com/spreadsheets/d/118i9ABrOEEZh9DKQfqblH9OoGBGFx7Ag0Om7qqwCFdU/edit?gid=29551570#gid=29551570"
+osu1 <- read_sheet(osu1_url)
+
+# Rescue batch 1
+rescue_url <- "https://docs.google.com/spreadsheets/d/1li20fbRxX5h_LOwlBBOShKI8qtU7lE5x2h9sRhBROY8/edit?gid=0#gid=0"
+rescue <- read_sheet(rescue_url)
+
+# OSU batch 2
+osu2_url <- "https://docs.google.com/spreadsheets/d/1ZoAR4zQvLvISfKTPKwIKd2HjcbdojCBwGO8ScfK5BDY/edit?gid=0#gid=0"
+osu2 <- read_sheet(osu2_url)
+
+# Col-0
+col0_url <- "https://docs.google.com/spreadsheets/d/1iuXe9JHEs8dgZdHgXvjMDzDs_dkk9j0DJzfdM8gVpz4/edit?gid=0#gid=0"
+col0 <- read_sheet(col0_url)
+
+# Making sure correct columns are factors
+osu1$Temp <- as.factor(osu1$Temp)
+rescue$Temp <- as.factor(rescue$Temp)
+osu2$Temp <- as.factor(osu2$Temp)
+col0$Temp <- as.factor(col0$Temp)
+rescue$Growth_time_days <- as.factor(rescue$Growth_time_days)
+osu2$Days_in_fridge <- as.factor(osu2$Days_in_fridge)
+col0$Num_plants <- as.factor(col0$Num_plants)
+```
+
+------------------------------------------------------------------------
+
+## t-tests
+
+Making a function for more efficient repetition:
+
+```{r}
+ez_ttest <- function(data, x, y) {
+  x <- as.character(x) # x and y should be strings
+  y <- as.character(y)
+
+  levels_x <- unique(data[[x]]) # determining how many levels of x there are and what they're called
+  
+  # Collecting results
+  summary_df <- data.frame()  # need to make the df before the for loop
+  combos <- combn(levels_x, 2, simplify = FALSE) # generating all possible combinations of levels 
+
+  for (pair in combos) {
+    subset_data <- data[data[[x]] %in% pair, ] # making a subset with just hte pair of interest
+    subset_data[[x]] <- droplevels(subset_data[[x]])
+    
+    formula <- as.formula(paste0("`", y, "` ~ `", x, "`")) # making a formula (includes backticks for decimals)
+    test_result <- t.test(formula, data = subset_data, var.equal = TRUE) # I was told to make var.equal = TRUE
+    
+    # Formatting the p-value based on its value
+    p_val <- test_result$p.value
+    formatted_p <- if (p_val < 0.01) {
+      formatC(p_val, format = "e", digits = 2) # scientific notation
+    } else {
+      formatC(p_val, format = "f", digits = 3) # standard notation
+    }
+
+    # Appending values to the dataframe
+    summary_df <- rbind(summary_df, data.frame(
+      comparison = paste(pair[1], "vs", pair[2]),
+      t = round(unname(test_result$statistic), 3),
+      p.value = formatted_p,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  rownames(summary_df) <- NULL # removes row names
+
+  # Naming the summary
+  data_name <- deparse(substitute(data)) # converting dataset input into string for output name
+  x_clean <- sub("_eq$", "", x) # removing "_eq" from end of input name (if there) for use in output name
+  y_clean <- sub("_eq$", "", y)
+  out_name <- paste0("ttests_", data_name, "_", y_clean, "_", x_clean)
+  
+  # Assigning to the global environment
+  assign(out_name, summary_df, envir = .GlobalEnv)
+
+  return(summary_df)
+}
+```
+
+------------------------------------------------------------------------
+
+### OSU batch 1
+
+#### 6.5
+
+```{r}
+ez_ttest(osu1, x = "Temp", y = "6.5_eq")
+```
+
+#### 17.3
+
+```{r}
+ez_ttest(osu1, x = "Temp", y = "17.3_eq")
+```
+
+#### 19
+
+```{r}
+ez_ttest(osu1, x = "Temp", y = "19_eq")
+```
+
+#### 22.2
+
+```{r}
+ez_ttest(osu1, x = "Temp", y = "22.2_eq")
+```
+
+------------------------------------------------------------------------
+
+### Rescue batch 1
+
+#### 6.5
+
+```{r}
+ez_ttest(rescue, x = "Temp", y = "6.5_eq")
+```
+
+#### 17.3
+
+```{r}
+ez_ttest(rescue, x = "Temp", y = "17.3_eq")
+```
+
+#### 19
+
+```{r}
+ez_ttest(rescue, x = "Temp", y = "19_eq")
+```
+
+#### 22.2
+
+```{r}
+ez_ttest(rescue, x = "Temp", y = "22.2_eq")
+```
+
+------------------------------------------------------------------------
+
+### OSU batch 2
+
+#### 6.5
+
+```{r}
+ez_ttest(osu2, x = "Temp", y = "6.5_eq")
+```
+
+#### 17.3
+
+```{r}
+ez_ttest(osu2, x = "Temp", y = "17.3_eq")
+```
+
+#### 19
+
+```{r}
+ez_ttest(osu2, x = "Temp", y = "19_eq")
+```
+
+#### 22.2
+
+```{r}
+ez_ttest(osu2, x = "Temp", y = "22.2_eq")
+```
+
+------------------------------------------------------------------------
+
+### Col-0
+
+#### 17.3
+
+```{r}
+ez_ttest(col0, x = "Temp", y = "17.3_eq")
+```
+
+#### 19
+
+```{r}
+ez_ttest(col0, x = "Temp", y = "19_eq")
+```
+
+#### 22.2
+
+```{r}
+ez_ttest(col0, x = "Temp", y = "22.2_eq")
+```
