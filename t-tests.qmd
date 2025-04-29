@@ -147,6 +147,18 @@ ez_ttest(rescue, x = "Temp", y = "19_eq")
 ez_ttest(rescue, x = "Temp", y = "22.2_eq")
 ```
 
+#### Growth time
+
+```{r}
+# Subsetting data to only include 21 degree plants
+rescue_21 <- rescue[rescue$Temp == "21", ]
+
+ez_ttest(rescue_21, x = "Growth_time_days", y = "6.5_eq")
+ez_ttest(rescue_21, x = "Growth_time_days", y = "17.3_eq")
+ez_ttest(rescue_21, x = "Growth_time_days", y = "19_eq")
+ez_ttest(rescue_21, x = "Growth_time_days", y = "22.2_eq")
+```
+
 ------------------------------------------------------------------------
 
 ### OSU batch 2
@@ -173,6 +185,26 @@ ez_ttest(osu2, x = "Temp", y = "19_eq")
 
 ```{r}
 ez_ttest(osu2, x = "Temp", y = "22.2_eq")
+```
+
+#### Time in fridge
+
+```{r}
+# Subsetting data by temperature
+osu2_21 <- osu2[osu2$Temp == "21", ]
+osu2_29 <- osu2[osu2$Temp == "29", ]
+
+# 21 degrees
+ez_ttest(osu2_21, x = "Days_in_fridge", y = "6.5_eq")
+ez_ttest(osu2_21, x = "Days_in_fridge", y = "17.3_eq")
+ez_ttest(osu2_21, x = "Days_in_fridge", y = "19_eq")
+ez_ttest(osu2_21, x = "Days_in_fridge", y = "22.2_eq")
+
+# 29 degrees
+ez_ttest(osu2_29, x = "Days_in_fridge", y = "6.5_eq")
+ez_ttest(osu2_29, x = "Days_in_fridge", y = "17.3_eq")
+ez_ttest(osu2_29, x = "Days_in_fridge", y = "19_eq")
+ez_ttest(osu2_29, x = "Days_in_fridge", y = "22.2_eq")
 ```
 
 ------------------------------------------------------------------------

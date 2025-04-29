@@ -96,13 +96,53 @@ ez_bp(osu1, y = "17.3_eq", ig = "I3M", log = TRUE)
 #### 19
 
 ```{r}
-ez_bp(osu1, y = "19_eq", ig = "4MO13M")
+ez_bp(osu1, y = "19_eq", ig = "4MOI3M")
 ```
 
 #### 22.2
 
 ```{r}
 ez_bp(osu1, y = "22.2_eq", ig = "1M")
+```
+
+#### Grid
+
+```{r}
+library(gridExtra)
+
+# Editing plots individually before arranging
+
+bp_osu1_6.5 <- bp_osu1_6.5 +
+  ggtitle("Sinigrin") +  # adding plot title
+  ylab("log nmol/mg fresh mass") +  # more general axis title
+  theme(axis.title.x = element_text(size = 0), # removing x-axis title
+        axis.title.y = element_text(size = 12)) # resizing y-axis title
+
+bp_osu1_17.3 <- bp_osu1_17.3 +
+  ggtitle("I3M") +
+  theme(axis.title.x = element_text(size = 0),
+        axis.title.y = element_text(size = 0))
+
+bp_osu1_19 <- bp_osu1_19 +
+  ggtitle("4MOI3M") +
+  ylab("nmol/mg fresh mass") +
+  theme(axis.title.x = element_text(size = 0),
+        axis.title.y = element_text(size = 12))
+
+bp_osu1_22.2 <- bp_osu1_22.2 +
+  ggtitle("1M") +
+  theme(axis.title.x = element_text(size = 0),
+        axis.title.y = element_text(size = 0))
+
+# Creating a grid layout with blank space for y-axis and x-axis titles
+final_plot <- arrangeGrob(grobs = list(bp_osu1_6.5, bp_osu1_17.3, bp_osu1_19, bp_osu1_22.2),
+  ncol = 2)
+
+# Final output with x-axis label
+grid.arrange(
+  final_plot,
+  bottom = textGrob("Temperature (°C)", gp = gpar(fontsize = 14))
+)
 ```
 
 ------------------------------------------------------------------------
@@ -124,13 +164,52 @@ ez_bp(rescue, y = "17.3_eq", ig = "I3M")
 #### 19
 
 ```{r}
-ez_bp(rescue, y = "19_eq", ig = "4MO13M")
+ez_bp(rescue, y = "19_eq", ig = "4MOI3M")
 ```
 
 #### 22.2
 
 ```{r}
 ez_bp(rescue, y = "22.2_eq", ig = "1M")
+```
+
+#### Grid
+
+```{r}
+# Editing plots individually before arranging
+bp_rescue_6.5 <- bp_rescue_6.5 +
+  ggtitle("Sinigrin") +  # adding plot title
+  theme(axis.title.x = element_text(size = 0), # removing axis titles
+        axis.title.y = element_text(size = 0))
+
+bp_rescue_17.3 <- bp_rescue_17.3 +
+  ggtitle("I3M") +
+  theme(axis.title.x = element_text(size = 0),
+        axis.title.y = element_text(size = 0))
+
+bp_rescue_19 <- bp_rescue_19 +
+  ggtitle("4MOI3M") +
+  theme(axis.title.x = element_text(size = 0),
+        axis.title.y = element_text(size = 0))
+
+bp_rescue_22.2 <- bp_rescue_22.2 +
+  ggtitle("1M") +
+  theme(axis.title.x = element_text(size = 0),
+        axis.title.y = element_text(size = 0))
+
+# Creating a grid layout with blank space for y-axis and x-axis titles
+final_plot <- arrangeGrob(grobs = list(bp_rescue_6.5, bp_rescue_17.3, bp_rescue_19, bp_rescue_22.2),
+  ncol = 2)
+
+# Final output with axis labels
+grid.arrange(arrangeGrob(
+    textGrob("nmol/mg fresh mass", rot = 90, gp = gpar(fontsize = 14)),
+    final_plot,
+    ncol = 2,
+    widths = c(0.05, 1) # making the y-axis title narrower
+  ),
+  bottom = textGrob("Temperature (°C)", gp = gpar(fontsize = 14))
+)
 ```
 
 ------------------------------------------------------------------------
@@ -152,13 +231,52 @@ ez_bp(osu2, y = "17.3_eq", ig = "I3M")
 #### 19
 
 ```{r}
-ez_bp(osu2, y = "19_eq", ig = "4MO13M")
+ez_bp(osu2, y = "19_eq", ig = "4MOI3M")
 ```
 
 #### 22.2
 
 ```{r}
 ez_bp(osu2, y = "22.2_eq", ig = "1M")
+```
+
+#### Grid
+
+```{r}
+# Editing plots individually before arranging
+bp_osu2_6.5 <- bp_osu2_6.5 +
+  ggtitle("Sinigrin") +  # adding plot title
+  theme(axis.title.x = element_text(size = 0), # removing axis titles
+        axis.title.y = element_text(size = 0))
+
+bp_osu2_17.3 <- bp_osu2_17.3 +
+  ggtitle("I3M") +
+  theme(axis.title.x = element_text(size = 0),
+        axis.title.y = element_text(size = 0))
+
+bp_osu2_19 <- bp_osu2_19 +
+  ggtitle("4MOI3M") +
+  theme(axis.title.x = element_text(size = 0),
+        axis.title.y = element_text(size = 0))
+
+bp_osu2_22.2 <- bp_osu2_22.2 +
+  ggtitle("1M") +
+  theme(axis.title.x = element_text(size = 0),
+        axis.title.y = element_text(size = 0))
+
+# Creating a grid layout with blank space for y-axis and x-axis titles
+final_plot <- arrangeGrob(grobs = list(bp_osu2_6.5, bp_osu2_17.3, bp_osu2_19, bp_osu2_22.2),
+  ncol = 2)
+
+# Final output with axis labels
+grid.arrange(arrangeGrob(
+    textGrob("nmol/mg fresh mass", rot = 90, gp = gpar(fontsize = 14)),
+    final_plot,
+    ncol = 2,
+    widths = c(0.05, 1) # making the y-axis title narrower
+  ),
+  bottom = textGrob("Temperature (°C)", gp = gpar(fontsize = 14))
+)
 ```
 
 ------------------------------------------------------------------------
@@ -174,11 +292,32 @@ ez_bp(col0, y = "17.3_eq", ig = "I3M")
 #### 19
 
 ```{r}
-ez_bp(col0, y = "19_eq", ig = "4MO13M")
+ez_bp(col0, y = "19_eq", ig = "4MOI3M")
 ```
 
 #### 22.2
 
 ```{r}
 ez_bp(col0, y = "22.2_eq", ig = "1M")
+```
+
+#### Grid
+
+```{r}
+# Editing plots individually before arranging
+bp_col0_17.3 <- bp_col0_17.3 +
+  ggtitle("I3M") +
+  ylab("nmol/mg fresh mass") +
+  theme(axis.title.x = element_text(size = 0))
+
+bp_col0_19 <- bp_col0_19 +
+  ggtitle("4MOI3M") +
+  theme(axis.title.y = element_text(size = 0))
+
+bp_col0_22.2 <- bp_col0_22.2 +
+  ggtitle("1M") +
+  ylab("nmol/mg fresh mass")
+
+# Arranging
+grid.arrange(bp_col0_17.3, bp_col0_19, bp_col0_22.2, ncol = 2)
 ```
